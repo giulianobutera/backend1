@@ -11,11 +11,17 @@ const cartManager = new CartManager('./carts.json');
 app.use(express.json());
 
 // Rutas de productos
+/**
+ * Obtiene todos los productos
+ */
 app.get('/api/products', async (req, res) => {
   const products = await productManager.getProducts();
   res.json({ products });
 });
 
+/**
+ * Obtiene un producto por su id
+ */
 app.get('/api/products/:pid', async (req, res) => {
   const product = await productManager.getProductById(req.params.pid);
   if (product) {
@@ -25,13 +31,14 @@ app.get('/api/products/:pid', async (req, res) => {
   }
 });
 
+/**
+ * Crea un nuevo producto
+ */
 app.post('/api/products', async (req, res) => {
   const { title, description, price, status, stock, category, thumbnails, code } = req.body;
-
   if (!title || !description || !price || !status || !stock || !category || !thumbnails || !code) {
     return res.status(400).json({ error: 'Todos los campos son obligatorios' });
   }
-
   const newProduct = await productManager.addProduct({
     title,
     description,
@@ -42,10 +49,12 @@ app.post('/api/products', async (req, res) => {
     thumbnails,
     code
   });
-  
   res.status(201).json(newProduct);
 });
 
+/**
+ * Actualiza un producto por su id
+ */
 app.put('/api/products/:pid', async (req, res) => {
   const { pid } = req.params;
   const updatedProduct = await productManager.updateProduct(pid, req.body);
@@ -56,6 +65,9 @@ app.put('/api/products/:pid', async (req, res) => {
   }
 });
 
+/**
+ * Elimina un producto por su id
+ */
 app.delete('/api/products/:pid', async (req, res) => {
   const { pid } = req.params;
   const deletedProduct = await productManager.deleteProduct(pid);
@@ -67,11 +79,17 @@ app.delete('/api/products/:pid', async (req, res) => {
 });
 
 // Rutas de carritos
+/**
+ * Crea un carrito
+ */
 app.post('/api/carts', async (req, res) => {
   const newCart = await cartManager.createCart();
   res.status(201).json(newCart);
 });
 
+/**
+ * Obtiene un carrito por su id
+ */
 app.get('/api/carts/:cid', async (req, res) => {
   const cart = await cartManager.getCartById(req.params.cid);
   if (cart) {
@@ -81,6 +99,9 @@ app.get('/api/carts/:cid', async (req, res) => {
   }
 });
 
+/**
+ * Agrega un producto por su id, a un carrito por su id
+ */
 app.post('/api/carts/:cid/product/:pid', async (req, res) => {
   const cart = await cartManager.addProductToCart(req.params.cid, req.params.pid);
   if (cart) {

@@ -1,4 +1,5 @@
 const fs = require('fs').promises;
+const { v4: uuidv4 } = require('uuid');
 
 class ProductManager {
   constructor(path) {
@@ -20,8 +21,7 @@ class ProductManager {
 
   async addProduct(product) {
     const products = await this._readFile();
-    const newId = products.length ? products[products.length - 1].id + 1 : 1;
-
+    const newId = uuidv4();
     const newProduct = {
       id: newId,
       ...product
@@ -38,30 +38,26 @@ class ProductManager {
 
   async getProductById(id) {
     const products = await this._readFile();
-    return products.find(p => p.id === parseInt(id));
+    return products.find(p => p.id === id);
   }
 
   async updateProduct(id, updatedProduct) {
     const products = await this._readFile();
-    const index = products.findIndex(p => p.id === parseInt(id));
-
+    const index = products.findIndex(p => p.id === id);
     if (index !== -1) {
-      products[index] = { ...products[index], ...updatedProduct };
+      products[index] = {...products[index], ...updatedProduct};
       await this._writeFile(products);
       return products[index];
     }
-
     return null;
   }
 
   async deleteProduct(id) {
     const products = await this._readFile();
-    const newProducts = products.filter(p => p.id !== parseInt(id));
-
+    const newProducts = products.filter(p => p.id !== id);
     if (newProducts.length === products.length) {
       return null;
     }
-
     await this._writeFile(newProducts);
     return { id };
   }

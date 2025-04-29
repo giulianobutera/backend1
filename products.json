@@ -1,0 +1,28 @@
+[
+  {
+    "id": "e1833731-f60c-4ecf-9fff-8e7b98bab28b",
+    "title": "Manzana roja",
+    "description": "Manzanas frescas y jugosas, ideales para meriendas saludables.",
+    "price": 300,
+    "status": "available",
+    "stock": 50,
+    "category": "Frutas",
+    "thumbnails": [
+      "https://media.istockphoto.com/id/184276818/es/foto/manzana-red.jpg?s=612x612&w=0&k=20&c=BFD8ixD7eyXMm3aSVIdz1hUsLG-lX8Ig2HBr6IVJuzU="
+    ],
+    "code": "AAA123"
+  },
+  {
+    "id": "03d17ff8-a13b-4124-851b-3244d57c437b",
+    "title": "Banana",
+    "description": "Banana fresca y lista para consumir, perfecta para postres y batidos.",
+    "price": 500,
+    "status": "available",
+    "stock": 30,
+    "category": "Frutas",
+    "thumbnails": [
+      "https://media.istockphoto.com/id/120492078/es/foto/tipo-banana.jpg?s=612x612&w=0&k=20&c=LCXu4PizZHCgQvPLFTSzcLzPLOxOCUq-22dN6BtbZh8="
+    ],
+    "code": "BBB456"
+  }
+]

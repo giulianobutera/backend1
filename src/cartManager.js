@@ -1,4 +1,5 @@
 const fs = require('fs').promises;
+const { v4: uuidv4 } = require('uuid');
 
 class CartManager {
   constructor(path) {
@@ -20,9 +21,8 @@ class CartManager {
 
   async createCart() {
     const carts = await this._readFile();
-    const newId = carts.length ? carts[carts.length - 1].id + 1 : 1;
-
-    const newCart = { id: newId, products: [] };
+    const newId = uuidv4();
+    const newCart = {id: newId, products: []};
     carts.push(newCart);
     await this._writeFile(carts);
     return newCart;
@@ -30,22 +30,19 @@ class CartManager {
 
   async getCartById(id) {
     const carts = await this._readFile();
-    return carts.find(c => c.id === parseInt(id));
+    return carts.find(c => c.id === id);
   }
 
   async addProductToCart(cid, pid) {
     const carts = await this._readFile();
-    const cart = carts.find(c => c.id === parseInt(cid));
-
+    const cart = carts.find(c => c.id === cid);
     if (!cart) return null;
-
     const existingProductIndex = cart.products.findIndex(p => p.product === pid);
     if (existingProductIndex !== -1) {
       cart.products[existingProductIndex].quantity += 1;
     } else {
-      cart.products.push({ product: pid, quantity: 1 });
+      cart.products.push({product: pid, quantity: 1});
     }
-
     await this._writeFile(carts);
     return cart;
   }
