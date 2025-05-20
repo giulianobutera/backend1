@@ -6,6 +6,7 @@ class CartManager {
     this.path = path;
   }
 
+  // Lee el archivo de carritos
   async _readFile() {
     try {
       const data = await fs.readFile(this.path, 'utf-8');
@@ -15,10 +16,12 @@ class CartManager {
     }
   }
 
+  // Escribe la lista de carritos en el archivo
   async _writeFile(data) {
     await fs.writeFile(this.path, JSON.stringify(data, null, 2));
   }
 
+  // Crea un nuevo carrito vacío
   async createCart() {
     const carts = await this._readFile();
     const newId = uuidv4();
@@ -28,11 +31,13 @@ class CartManager {
     return newCart;
   }
 
+  // Obtiene un carrito por su ID
   async getCartById(id) {
     const carts = await this._readFile();
     return carts.find(c => c.id === id);
   }
 
+  // Agrega un producto a un carrito, si ya existe, aumenta la cantidad
   async addProductToCart(cid, pid) {
     const carts = await this._readFile();
     const cart = carts.find(c => c.id === cid);

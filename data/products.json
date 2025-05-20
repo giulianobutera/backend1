@@ -24,5 +24,18 @@
       "https://media.istockphoto.com/id/120492078/es/foto/tipo-banana.jpg?s=612x612&w=0&k=20&c=LCXu4PizZHCgQvPLFTSzcLzPLOxOCUq-22dN6BtbZh8="
     ],
     "code": "BBB456"
+  },
+  {
+    "id": "7a00be61-d031-4216-adbe-3e5e9e33e0b6",
+    "title": "Pera verde",
+    "description": "Peras frescas y dulces, perfectas para postres o meriendas.",
+    "price": "250",
+    "code": "CCC789",
+    "category": "Frutas",
+    "thumbnails": [
+      "https://media.istockphoto.com/id/529401513/es/foto/peras.jpg?s=612x612&w=0&k=20&c=TVELm-jEP2cUP-c8LVJ2JBvICVVdQQm-GPttW9DvTsU="
+    ],
+    "stock": "40",
+    "status": "available"
   }
 ]
