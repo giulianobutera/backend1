@@ -1,72 +1,72 @@
-const fs = require('fs').promises;
-const { v4: uuidv4 } = require('uuid');
+const Product = require('./models/product');
 
 class ProductManager {
-  constructor(path) {
-    this.path = path;
-  }
-
-  // Lee el archivo y devuelve la lista de productos
-  async _readFile() {
-    try {
-      const data = await fs.readFile(this.path, 'utf-8');
-      return JSON.parse(data);
-    } catch (err) {
-      return [];
-    }
-  }
-
-  // Escribe la lista de productos en el archivo
-  async _writeFile(data) {
-    await fs.writeFile(this.path, JSON.stringify(data, null, 2));
-  }
-
-  // Agrega un nuevo producto con ID único
-  async addProduct(product) {
-    const products = await this._readFile();
-    const newId = uuidv4();
-    const newProduct = {
-      id: newId,
-      ...product
-    };
-
-    products.push(newProduct);
-    await this._writeFile(products);
-    return newProduct;
-  }
-
-  // Devuelve todos los productos
+  // Devuelve todos los productos paginados y con query
   async getProducts() {
-    return await this._readFile();
+    return await Product.find();
+  }
+
+  async getPaginatedProducts({ limit = 10, page = 1, sort, query }) {
+    const parsedLimit = parseInt(limit);
+    const parsedPage = parseInt(page);
+
+    const filter = {};
+    if (query) {
+      if (['available', 'not available'].includes(query)) {
+        filter.status = query;
+      } else {
+        filter.category = query;
+      }
+    }
+
+    const sortOption = {};
+    if (sort === 'asc') sortOption.price = 1;
+    if (sort === 'desc') sortOption.price = -1;
+
+    const skip = (parsedPage - 1) * parsedLimit;
+
+    const [products, totalDocs] = await Promise.all([
+      Product.find(filter).sort(sortOption).skip(skip).limit(parsedLimit),
+      Product.countDocuments(filter)
+    ]);
+
+    const totalPages = Math.ceil(totalDocs / parsedLimit);
+    const hasPrevPage = parsedPage > 1;
+    const hasNextPage = parsedPage < totalPages;
+
+    return {
+      status: 'success',
+      payload: products,
+      totalPages,
+      prevPage: hasPrevPage ? parsedPage - 1 : null,
+      nextPage: hasNextPage ? parsedPage + 1 : null,
+      page: parsedPage,
+      hasPrevPage,
+      hasNextPage,
+      prevLink: hasPrevPage ? `/api/products?page=${parsedPage - 1}&limit=${parsedLimit}` : null,
+      nextLink: hasNextPage ? `/api/products?page=${parsedPage + 1}&limit=${parsedLimit}` : null
+    };
   }
 
   // Devuelve un producto por ID
   async getProductById(id) {
-    const products = await this._readFile();
-    return products.find(p => p.id === id);
+    return await Product.findById(id);
+  }
+
+  // Agrega un nuevo producto con ID único
+  async addProduct(productData) {
+    const newProduct = new Product(productData);
+    return await newProduct.save();
   }
 
   // Actualiza un producto existente
-  async updateProduct(id, updatedProduct) {
-    const products = await this._readFile();
-    const index = products.findIndex(p => p.id === id);
-    if (index !== -1) {
-      products[index] = {...products[index], ...updatedProduct};
-      await this._writeFile(products);
-      return products[index];
-    }
-    return null;
+  async updateProduct(id, updatedFields) {
+    return await Product.findByIdAndUpdate(id, updatedFields, { new: true });
   }
 
   // Elimina un producto por ID
   async deleteProduct(id) {
-    const products = await this._readFile();
-    const newProducts = products.filter(p => p.id !== id);
-    if (newProducts.length === products.length) {
-      return null;
-    }
-    await this._writeFile(newProducts);
-    return { id };
+    return await Product.findByIdAndDelete(id);
   }
 }
 

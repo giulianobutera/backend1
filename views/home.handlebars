@@ -1,6 +1,22 @@
-<h1>Lista de Productos:</h1>
+<h1>Todos los productos</h1>
+
 <ul>
-  {{#each products}} <!-- Se recorren los productos enviados desde el router -->
-    <li>{{this.title}} - ${{this.price}}</li>
+  {{#each payload}}
+    <li>
+      <a href="/products/{{this._id}}"><strong>{{this.title}}</strong></a> - ${{this.price}} <br>
+      Categoría: {{this.category}} | Stock: {{this.stock}}
+    </li>
   {{/each}}
 </ul>
+
+<p>Página actual: {{page}} de {{totalPages}}</p>
+
+<div>
+  {{#if hasPrevPage}}
+    <a href="/products?page={{prevPage}}&limit=10">⬅ Anterior</a>
+  {{/if}}
+
+  {{#if hasNextPage}}
+    <a href="/products?page={{nextPage}}&limit=10">Siguiente ➡</a>
+  {{/if}}
+</div>

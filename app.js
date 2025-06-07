@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const path = require('path');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
@@ -14,6 +15,14 @@ const app = express();
 const PORT = 8080;
 const httpServer = createServer(app);
 const io = new Server(httpServer);
+
+mongoose.connect("mongodb+srv://gbutera140:GtF59kB9vz8qC8nR@cluster0.coyyw28.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+  .then(() => {
+    console.log("Conectado a la base de datos de Mongo Atlas")
+  })
+  .catch(error => {
+    console.error("La conexión no se ha podido realizar", error)
+  });
 
 const productManager = new ProductManager('./data/products.json');
 
@@ -39,7 +48,6 @@ io.on('connection', async socket => {
 
   // Crear producto desde formulario
   socket.on('new-product', async data => {
-    data.thumbnails = [data.thumbnails]
     await productManager.addProduct(data);
     const updatedProducts = await productManager.getProducts();
     io.emit('products', updatedProducts);
