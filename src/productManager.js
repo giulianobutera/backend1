@@ -26,7 +26,7 @@ class ProductManager {
     const skip = (parsedPage - 1) * parsedLimit;
 
     const [products, totalDocs] = await Promise.all([
-      Product.find(filter).sort(sortOption).skip(skip).limit(parsedLimit),
+      Product.find(filter).sort(sortOption).skip(skip).limit(parsedLimit).lean(),
       Product.countDocuments(filter)
     ]);
 
@@ -50,7 +50,7 @@ class ProductManager {
 
   // Devuelve un producto por ID
   async getProductById(id) {
-    return await Product.findById(id);
+    return await Product.findById(id).lean();
   }
 
   // Agrega un nuevo producto con ID único
